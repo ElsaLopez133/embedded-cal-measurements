@@ -5,12 +5,12 @@ import os
 import matplotlib.pyplot as plt
 
 plt.rcParams.update({
-    "axes.titlesize": 20,
-    "axes.labelsize": 18,
-    "xtick.labelsize": 16,
-    "ytick.labelsize": 16,
-    "legend.fontsize": 16,
-    "figure.titlesize": 22
+    "axes.titlesize": 22,
+    "axes.labelsize": 20,
+    "xtick.labelsize": 18,
+    "ytick.labelsize": 18,
+    "legend.fontsize": 18,
+    "figure.titlesize": 24
 })
 
 #############################################
@@ -87,11 +87,11 @@ for op in operations:
 #############################################
 # Plotting: Time with two subplots
 #############################################
-symmetric_ops = ["aes-128", "sha2-256"]
+symmetric_ops = ["aes-ecb-128", "sha2-256"]
 asymmetric_ops = ["ecdsa-sign", "ecdsa-verify", "ecc-mult"]
 
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-fig.suptitle(f"Time Comparison - {platform.upper()}")
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+fig.suptitle(f"Time (ms) - {platform.upper()}")
 
 for ax, group, title in zip(axes, [symmetric_ops, asymmetric_ops], ["Symmetric operations", "Asymmetric operations"]):
     ops = []
@@ -122,7 +122,9 @@ for ax, group, title in zip(axes, [symmetric_ops, asymmetric_ops], ["Symmetric o
     ax.bar(x + width/2, sw_means, width, yerr=sw_cis, capsize=5, label="Software")
     ax.set_xticks(x)
     ax.set_xticklabels(ops)
+    ax.tick_params(axis='x', labelrotation=30)   # or 45, or 60 degrees
     ax.set_ylabel("Time (ms)")
+    ax.set_xlim(-0.5, len(ops) - 0.5)
     ax.set_title(title)
     # ax.set_yscale("log")
     ax.legend()
@@ -156,7 +158,11 @@ def plot_metric(metric_key):
     
     ax.set_ylabel(label)
     ax.set_xticks(x)
+    ax.tick_params(axis='x', labelrotation=30)   # or 45, or 60 degrees
     ax.set_xticklabels(ops)
+     
+    ax.set_xlim(-0.5, len(ops) - 0.5)
+
     ax.set_title(f"{label}: Hardware vs Software ({platform.upper()})")
     ax.legend()
     
