@@ -37,9 +37,9 @@ folder = os.path.join("measurements", platform)
 #############################################
 data = {}
 COLUMN_MAP = {
-    "time_ms": "time (ms)",
-    "avg_current_mA": "Avg Current (mA)",
-    "avg_power_mW": "Avg Power (mW)"
+    "time_s": "time (s)",
+    "avg_current_A": "Avg Current (A)",
+    "avg_power_W": "Avg Power (W)"
 }
 
 IMPL_MAP = {
@@ -73,9 +73,9 @@ operations = list(data.keys())
 # Prepare results per metric
 #############################################
 results = {
-    "time_ms": {"label": "Time", "values": {}},
-    "avg_current_mA": {"label": "Avg Current (mA)", "values": {}},
-    "avg_power_mW": {"label": "Avg Power (mW)", "values": {}},
+    "time_s": {"label": "Time", "values": {}},
+    "avg_current_A": {"label": "Avg Current (mA)", "values": {}},
+    "avg_power_W": {"label": "Avg Power (mW)", "values": {}},
 }
 
 for op in operations:
@@ -96,8 +96,8 @@ fig.suptitle(f"Time Comparison - {platform.upper()}")
 
 # Hardware subplot
 x = np.arange(len(hw_ops))
-hw_means = [results["time_ms"]["values"][op]["HW"][0] for op in hw_ops]
-hw_cis = [results["time_ms"]["values"][op]["HW"][1] for op in hw_ops]
+hw_means = [results["time_s"]["values"][op]["HW"][0] * 1000 for op in hw_ops]
+hw_cis = [results["time_s"]["values"][op]["HW"][1] * 1000 for op in hw_ops]
 axes[0].bar(x, hw_means, yerr=hw_cis, capsize=5)
 axes[0].set_xticks(x)
 axes[0].set_xticklabels([op.upper() for op in hw_ops])
@@ -105,14 +105,14 @@ axes[0].set_ylabel("Time (ms)")
 axes[0].set_title("Hardware")
 # axes[0].set_yscale("log")
 
-# Software subplot (convert to seconds)
+# Software subplot
 x = np.arange(len(sw_ops))
-sw_means = [results["time_ms"]["values"][op]["SW"][0] for op in sw_ops]
-sw_cis = [results["time_ms"]["values"][op]["SW"][1] for op in sw_ops]
+sw_means = [results["time_s"]["values"][op]["SW"][0] * 1000 for op in sw_ops]
+sw_cis = [results["time_s"]["values"][op]["SW"][1] * 1000 for op in sw_ops]
 axes[1].bar(x, sw_means, yerr=sw_cis, capsize=5, color = "darkorange")
 axes[1].set_xticks(x)
 axes[1].set_xticklabels([op.upper() for op in sw_ops])
-axes[1].set_ylabel("Time (s)")
+axes[1].set_ylabel("Time (ms)")
 axes[1].set_title("Software")
 # axes[1].set_yscale("log")
 
@@ -132,11 +132,11 @@ def plot_metric(metric_key):
     x = np.arange(len(ops))
     width = 0.35
     
-    hw_means = [metric_data[op]["HW"][0] for op in ops]
-    hw_errs  = [metric_data[op]["HW"][1] for op in ops]
+    hw_means = [metric_data[op]["HW"][0] * 1000 for op in ops]
+    hw_errs  = [metric_data[op]["HW"][1] * 1000 for op in ops]
     
-    sw_means = [metric_data[op]["SW"][0] for op in ops]
-    sw_errs  = [metric_data[op]["SW"][1] for op in ops]
+    sw_means = [metric_data[op]["SW"][0] * 1000 for op in ops]
+    sw_errs  = [metric_data[op]["SW"][1] * 1000 for op in ops]
 
     fig, ax = plt.subplots(figsize=(10, 5))
     
@@ -154,7 +154,7 @@ def plot_metric(metric_key):
     plt.savefig(f"plots/{platform}/{metric_key}_comparison.png", dpi=300, bbox_inches='tight')
     plt.close()
 
-plot_metric("avg_current_mA")
-plot_metric("avg_power_mW")
+plot_metric("avg_current_A")
+plot_metric("avg_power_W")
 
 print(f"All figures saved for platform: {platform}")
